@@ -2,119 +2,100 @@
 expr ∷= term
 expr ∷= expr '+' term
 
-term ∷= term2
-term ∷= term '*' term2
+// term ∷= term2
+// term ∷= term '*' term2
 
-VInt ∷= 'int'
-term  ∷=  '(' expr ')'
+term2 ∷= 'int'
+// term2 ∷=  '(' expr ')'
 */
 
+const VAddOp = function(val1, val2) {
+  this.operand1 = val1
+  this.operand2 = val2
+}
+
+const createAddOp = function(operand1, operand2) {
+  return Object.freeze(new VAddOp(operand1, operand2))
+}
 
 const VInt = function(value) {
   this.value = value
 }
 
-const createTerm = function(value) {
+const createInt = function(value) {
   return Object.freeze(new VInt(value))
 }
 
 
+const takeFromEnd = function(arr, n) {
+  return arr.slice(-n)
+}
 
+const matchAddOp = function(op1, addOp, op2) {
+  return op1 instanceof VInt
+    && addOp === '+'
+    && op2 instanceof VInt
+    ? createAddOp(op1, op2)
+    : null
 
+}
 
+const matchInt = function(int) {
+  return int === 'int'
+    ? createInt(1)
+    : null
+}
 
+const theMatchers = {
+  0: [],
+  1: [matchInt],
+  2: [],
+  3: [matchAddOp],
+}
 
+const retrieveMatchersOfLength = function(n) {
+  return theMatchers[n]
+}
 
+const matchInput = function(ws) {
+  for (let i = 1; i <= ws.length; i++) {
+    const matchers = retrieveMatchersOfLength(i)
 
-const tokens = ["int", "+", "(", "int", "+", "int", "*", "int", ")"]
+    for (m of matchers) {
+      const result = m(...takeFromEnd(ws, i))
 
+      if (result) {
+        return [result, i]
+      }
+    }
+  }
 
+  return null
+}
 
+const main = function(tokens) {
+  const innerTokens = [...tokens]
+  const workstack = []
 
-const a = createTerm(5)
-console.log(a)
+  while (tokens.length > 0 || workstack.length > 1) {
+    if (tokens.length > 0) {
+      workstack.push(tokens.shift())
+    }
 
+    const r = matchInput(workstack)
 
+    if (r) {
+      const [
+        redux,
+        reduxLength,
+      ] = r
 
-// const parseParens(v1, v2, v3) {
-//   if (
-//     v1 === '(' &&
-//     v2.type === 'expr' &&
-//     v3 === ')'
-//   ) {
-//     return Term(
+      workstack.splice(-reduxLength)
+      workstack.push(redux)
+      console.log(workstack)
+    }
+  }
+}
 
-// const parseInt(v) {
-//   if (v === 'int') {
-//     return {
-//       val
-
-
-
-
-
-// const gen = (token, text) => {
-//   return {
-//     token: token,
-//     text: text,
-//   }
-// }
-
-// const spaces = (str) => {
-//   let m
-
-//   if (m = str.match(/^[ ]+/)) {
-//     return gen(null, str.substr(m[0]))
-//   }
-
-//   return gen(null, str)
-// }
-
-// const number = (str) => {
-//   const numberRe = /^\d+/g
-//   const m = numberRe.exec(str)
-
-//   return gen(
-//     numberRe
-//     ? {
-//       type: 'number',
-//       value: Integer(m[0]),
-//     }
-//     : null,
-//     str.substr(numberRe.lastIndex),
-//   )
-// }
-
-// const dollarWord = (str) => {
-//   const dollarWordRe = /^\$(\w*)/g
-//   const m = dollarWordRe.exec(str)
-
-//   return gen(
-//     dollarWordRe
-//     ? {
-//       type: 'dollarWorld',
-//       value: m[1],
-//     }
-//     : null,
-//     str.substr(dollarWordRe.lastIndex),
-//   )
-// }
-
-// const choice = (prs1, prs2) => (str) => {
-//   const result = prs1(str)
-//   if (result.token) {
-//     return gen(result.token, result.text)
-//   }
-
-//   else {
-//     return prs2(str)
-//   }
-// }
-
-// const lex = (str) => {
-//   // return number(str)
-//     // ||
-//   return  dollarWord(str)
-// }
-
-// const str = '$expr( 23, 500 )'
+const tokens = ["int", "+", "int"]
+main(tokens)
