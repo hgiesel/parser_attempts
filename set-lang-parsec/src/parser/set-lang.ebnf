@@ -1,0 +1,147 @@
+http://smlweb.cpsc.ucalgary.ca/start.html
+
+D -> E.                                                  -> id
+D -> D power E.                                          -> VPowerOp
+E -> F.                                                  -> id
+E -> E add F.                                            -> VAddOp
+E -> E sub F.                                            -> VSubOp
+E -> E logicalAnd F.                                     -> VSubOp
+F -> G.                                                  -> id
+F -> F mult G.                                           -> VMultOp
+F -> F div G.                                            -> VDivOp
+F -> F logicalOr G.                                            -> VDivOp
+G -> number.                                             -> VInt
+G -> bool.
+G -> string.
+G -> name.
+G -> openParen E closeParen.                             -> id
+G -> name openParen H closeParen.
+G -> name openBracket H closeBracket.
+H -> D.
+H -> D comma D.                                          -> id
+
+
+
+   | Action ----- | ------------ | --- | ----- | ------------ | ------------ | Goto | -- | -- |
+IS | '$'          | ')'          | '(' | 'int' | '*'          | '+'          | E    | F  | G  |
+0  |              |              | s5  | s4    |              |              | 3    | 2  | 1  |
+1  | r(F → G)     | r(F → G)     |     |       | r(F → G)     | r(F → G)     |      |    |    |
+2  | r(E → F)     | r(E → F)     |     |       | s8           | r(E → F)     |      |    |    |
+3  | acc          |              |     |       |              | s7           |      |    |    |
+4  | r(G → int)   | r(G → int)   |     |       | r(G → int)   | r(G → int)   |      |    |    |
+5  |              |              | s5  | s4    |              |              | 6    | 2  | 1  |
+6  |              | s11          |     |       |              | s7           |      |    |    |
+7  |              |              | s5  | s4    |              |              |      | 10 | 1  |
+8  |              |              | s5  | s4    |              |              |      |    | 9  |
+9  | r(F → F * G) | r(F → F * G) |     |       | r(F → F * G) | r(F → F * G) |      |    |    |
+10 | r(E → E + F) | r(E → E + F) |     |       | s8           | r(E → E + F) |      |    |    |
+11 | r(G → ( E )) | r(G → ( E )) |     |       | r(G → ( E )) | r(G → ( E )) |      |    |    |
+
+
+
+
+
+
+
+
+
+
+
+
+
+<set>                ::= <open-delim> , <field> , <close-delim>;
+<field>              ::= <element> , [ <field-separator> , <field> ];
+<element>            ::= <text-element> | <value-set> | <function-element>;
+
+<text-element>       ::= (* all Unicode character except
+                     <field-separator> and <close-delim> and not starting with "$" *);
+
+<value-set>          ::= "$" , <qual-identifier> , { <value-set-delim> , <value> };
+<value>              ::= <text-element> (* with special escapting rules *);
+<value-set-delim>    ::= "|" | "@" | "#" | "^" | …;
+
+<function-element>   ::= <generator-function> | <shuffle-function> | <styling-function>;
+
+<generator-function> ::= <pick-function> | <eval-function> | <yank-function>;
+<yank-type>          ::= "rect" | "ellipse" | "polygon" | "line" | "arrow" | "darrow" | "text"
+
+<pick-function>      ::= "$pick"
+                     , <open-paren>
+                     , [ <amount-expr> , <comma-left> ]
+                     , <value-set-expr>
+                     , { <comma-right> , <gen-kwarg> }
+                     , <close-paren>;
+
+<eval-function>      ::= "$eval"
+                     , <open-paren>
+                     , [ <amount-expr> , <comma-left> ]
+                     , <value-set-expr>
+                     , { <comma-right> , <gen-kwarg> }
+                     , <close-paren>;
+
+<yank-function>      ::= "$yank"
+                     , <open-paren>
+                     , [ <number> , <comma-left> ]
+                     , <qual-identifier>
+                     , [ <comma-right> , <yank-type> ]
+                     , [ <comma-right> , <dimensions> ]
+                     , <close-paren>;
+
+<shuffle-function>   ::= <name-function> | <order-function> | <copy-function> | <del-function>;
+
+<name-function>      ::= "$name"
+                     , <open-paren>
+                     , [ <rule> , <comma-left> ]
+                     , <qual-identifier>
+                     , [ <comma-right> , <position> ]
+                     , <close-paren>;
+
+<name-function>      ::= "$order"
+                     , <open-paren>
+                     , [ <rule> , <comma-left> ]
+                     , <qual-identifier>
+                     , [ <comma-right> , <position> ]
+                     , <close-paren>;
+
+<copy-function>      ::= "$copy"
+                     , <open-paren>
+                     , [ <amount-expr> , <comma-left> ]
+
+<del-function>       ::= "$del"
+                     , <open-paren>
+                     , [ <amount-expr> , <comma-left> ]
+                     , <close-paren>;
+
+<styling-function>   ::= <style-function> | <apply-function>;
+
+<style-function>     ::= "$style",
+                     , <open-paren>
+                     , <qual-identifier>
+                     , { <comma-right> , <style-property> }
+                     , <close-paren>;
+
+<apply-function>     ::= "$apply",
+                     , <open-paren>
+                     , [ <rule> , <comma-left> ]
+                     , <qual-identifier>
+                     , [ <comma-right> , <position> ]
+                     , <close-paren>;
+
+<open-paren>         ::= "(" , <opt-whitespace>;
+<close-paren>        ::= <opt-whitespace> , ")";
+<comma-left>         ::= "," , <opt-whitespace>;
+<comma-right>        ::= <opt-whitespace> , ",";
+
+<amount-expr>        ::= <number> | <amount-star> | <amount-plus> | <amount-question>;
+<amount-star>        ::= "*";
+<amount-plus>        ::= "+";
+<amount-question>    ::= "?";
+<number>             ::= { <digit> };
+<digit>              ::= "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" | "0";
+
+<rule>               ::= <value-set-name> | <uniq-set-name>;
+<value-set-name>     ::= "$$" | ( <value-set-part> , <value-set-part> , <value-set-part> );
+<value-set-part>     ::= "$" , ( "_" | "*" | <qual-identifier> );
+<uniq-set-name>      ::= "uc:" , <qual-identifier>;
+
+<qual-identifier>    ::= [ "_" ] , <alpha> , <alpha-num-symbol>
