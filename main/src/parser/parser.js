@@ -20,17 +20,6 @@ export const parse = function(tokens) {
     }
   }
 
+  console.log('outp', output)
   return output
 }
-
-
-// if (r) {
-//   const [
-//     redux,
-//     reduxLength,
-//   ] = r
-
-//   workstack.splice(-reduxLength)
-//   workstack.push(redux)
-//   debugger
-// }

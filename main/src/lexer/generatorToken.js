@@ -3,7 +3,7 @@ const GeneratorToken = function(token, text) {
   this.text = text
 }
 
-export const gen = (token, text) => GeneratorToken(
+export const gen = (token, text) => new GeneratorToken(
   token,
   text,
 )

@@ -1,10 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Set Lang Test</title>
-  <script src="./Main.js"></script>
-</head>
-<body>
-</body>
+  <head>
+    <meta charset="UTF-8">
+    <title>Set Lang Test</title>
+    <script src="./Main.js"></script>
+    <link rel="stylesheet" href="Main.css"/>
+  </head>
+  <body>
+
+    <label for="sr-test">Set Lang Test</label>
+    <textarea id="sr-test" cols="80" rows="10"></textarea>
+
+    <div>
+      <button id="btn-lex" type="button">Lex!</button>
+      <button id="btn-parse" type="button">Parse!</button>
+      <button id="btn-exec" type="button">Execute!</button>
+    </div>
+
+    <div id="sr-output">
+    </div>
+
+    <script src="./Extra.js"></script>
+  </body>
 </html>

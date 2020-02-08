@@ -37,9 +37,6 @@ const reducer = function(constr, symbol) {
       output.push(result)
     }
 
-    console.log(ss.peek(), output)
-    debugger
-
     ss.pop(constr.arityState)
     ss.push(lookupGoto(symbol, ss.peek()))
 
@@ -85,7 +82,7 @@ multOp[2] = shifter(8)
 multOp[4] = reducer(createInt, symbols.g)
 multOp[9] = reducer(createMultOp, symbols.f)
 multOp[10] = shifter(8)
-multOp[11] = reducer(nullop(1), symbols.g)
+multOp[11] = reducer(nullop(3), symbols.g)
 
 const addOp = []
 addOp[1] = reducer(nullop(1), symbols.f)
@@ -95,14 +92,14 @@ addOp[4] = reducer(createInt, symbols.e)
 addOp[6] = shifter(7)
 addOp[9] = reducer(createMultOp, symbols.f)
 addOp[10] = reducer(createAddOp, symbols.e)
-addOp[11] = reducer(nullop(1), symbols.g)
+addOp[11] = reducer(nullop(3), symbols.g)
 
 const actionTable = {
-  'int': int,
-  '*': multOp,
-  '+': addOp,
-  '(': openParen,
-  ')': closeParen,
+  'number': int,
+  'multiply': multOp,
+  'add': addOp,
+  'openParen': openParen,
+  'closeParen': closeParen,
   'eof': eof,
 }
 
@@ -110,36 +107,14 @@ export const lookupAction = function(
   token,
   state /* number */,
 ) {
-  const result = actionTable[token][state]
+  const result = actionTable[token.type][state]
 
   if (!result) {
-    console.info(`Action ${token} + ${state} does not exist`)
+    console.info(`Action ${token.type} + ${state} does not exist`)
   }
   else {
-    console.info(`Next Action: ${token} + ${state}`)
+    console.info(`Next Action: ${token.type} + ${state}`)
   }
 
   return result
 }
-
-// 0. E → F           -> id
-// 1. E → E '+' F     -> VAddOp
-// 2. F → G           -> id
-// 3. F → F '*' G     -> VMultOp
-// 4. G → 'int'       -> VInt
-// 5. G → '(' E ')'   -> id
-
-//    | Action ----- | ------------ | --- | ----- | ------------ | ------------ | Goto | -- | -- |
-// IS | '$'          | ')'          | '(' | 'int' | '*'          | '+'          | E    | F  | G  |
-// 0  |              |              | s5  | s4    |              |              | 3    | 2  | 1  |
-// 1  | r(F → G)     | r(F → G)     |     |       | r(F → G)     | r(F → G)     |      |    |    |
-// 2  | r(E → F)     | r(E → F)     |     |       | s8           | r(E → F)     |      |    |    |
-// 3  | acc          |              |     |       |              | s7           |      |    |    |
-// 4  | r(G → int)   | r(G → int)   |     |       | r(G → int)   | r(G → int)   |      |    |    |
-// 5  |              |              | s5  | s4    |              |              | 6    | 2  | 1  |
-// 6  |              | s11          |     |       |              | s7           |      |    |    |
-// 7  |              |              | s5  | s4    |              |              |      | 10 | 1  |
-// 8  |              |              | s5  | s4    |              |              |      |    | 9  |
-// 9  | r(F → F * G) | r(F → F * G) |     |       | r(F → F * G) | r(F → F * G) |      |    |    |
-// 10 | r(E → E + F) | r(E → E + F) |     |       | s8           | r(E → E + F) |      |    |    |
-// 11 | r(G → ( E )) | r(G → ( E )) |     |       | r(G → ( E )) | r(G → ( E )) |      |    |    |

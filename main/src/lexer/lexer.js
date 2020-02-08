@@ -1,19 +1,26 @@
 import {
   choice,
+  many1,
 } from './lexerCombinator.js'
 
 import {
   number,
   add,
   multiply,
-  spaces,
+  openParen,
+  closeParen,
+  space,
+  eof,
 } from './lexerTokens.js'
 
-export const algLex = choice(
-  spaces,
+export const algLex = many1(choice(
+  eof,
+  space,
   add,
   multiply,
   number,
-)
+  openParen,
+  closeParen,
+))
 
 // const str = '$expr( 23, 500 )'

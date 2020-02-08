@@ -1,16 +1,33 @@
 import {
-  parse,
-} from './lib/parser.js'
+  algLex,
+} from './lexer/lexer.js'
 
 import {
-  algLex,
-} from './lib/lexer.js'
+  parse,
+} from './parser/parser.js'
 
-const main = function() {
-  const input = '23 + 38 * 99'
+import {
+  execute,
+} from './execute/execute.js'
 
-  console.log(algLex(input))
-  // parse(tokens)
+const mainLex = function(
+  input = '23 + 38 * 99',
+) {
+  return algLex(input)
 }
 
-main()
+const mainParse = function(
+  input,
+) {
+  return parse(input)
+}
+
+const mainExec = function(
+  input,
+) {
+  return execute(input)
+}
+
+window.mainLex = mainLex
+window.mainParse = mainParse
+window.mainExec = mainExec
