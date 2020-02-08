@@ -14,6 +14,8 @@ const simpleToken = (name, regex) => (str) => {
   return null
 }
 
+const keywordToken = (name) => simpleToken(name, new RegExp(`^${name}`, 'gu'))
+
 export const eof = (str) => {
   const eofRegex = /^$/gu
   const m = eofRegex.exec(str)
@@ -52,31 +54,10 @@ export const number = (str) => {
   return null
 }
 
-export const add = (str) => {
-  const addRe = /^\+/gu
-  const m = addRe.exec(str)
-
-  if (m) {
-    return gen({
-      type: 'add',
-    }, str.substr(addRe.lastIndex))
-  }
-
-  return null
-}
-
-export const multiply = (str) => {
-  const multiplyRe = /^\*/gu
-  const m = multiplyRe.exec(str)
-
-  if (m) {
-    return gen({
-      type: 'multiply',
-    }, str.substr(multiplyRe.lastIndex))
-  }
-
-  return null
-}
+export const add = simpleToken('add', /^\+/gu)
+export const multiply = simpleToken('multiply', /^\*/gu)
 
 export const openParen = simpleToken('openParen', /^\(/gu)
 export const closeParen = simpleToken('closeParen', /^\)/gu)
+
+export const forKw = keywordToken('for')
