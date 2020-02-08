@@ -2,14 +2,15 @@ import {
   parse,
 } from './lib/parser.js'
 
-const main = function() {
-  const tokens = [
-    'int',
-    '+',
-    'int',
-  ]
+import {
+  algLex,
+} from './lib/lexer.js'
 
-  parse(tokens)
+const main = function() {
+  const input = '23 + 38 * 99'
+
+  console.log(algLex(input))
+  // parse(tokens)
 }
 
 main()

@@ -6,25 +6,24 @@ const creator = function(cls) {
   return creat
 }
 
-const matcher = function(pred, crt, extract) {
-  const mat = function(...args) {
-    if (pred(...args)) {
-      return crt(...extract(...args))
-    }
-
-    return null
+const extractor = function(crt) {
+  const extr = function(...args) {
+    return crt(...args)
   }
 
-  return mat
+  return extr
 }
 
-export const construct = function(cls, pred, extract) {
+export const construct = function(cls, arityForArgs, arityForStates) {
   const crt = creator(cls)
-  const mtch = matcher(pred, crt, extract)
+  const wrappedCrt = extractor(crt)
 
-  return mtch
+  return {
+    crt: wrappedCrt,
+    arity: arityForArgs,
+    arityState: arityForStates
+  }
 }
 
 export const id = (...xs) => xs
 export const dropMid = (x1, x2, x3) => [x1, x3]
-
