@@ -96,31 +96,8 @@
     return null
   };
 
-  const add = (str) => {
-    const addRe = /^\+/gu;
-    const m = addRe.exec(str);
-
-    if (m) {
-      return gen({
-        type: 'add',
-      }, str.substr(addRe.lastIndex))
-    }
-
-    return null
-  };
-
-  const multiply = (str) => {
-    const multiplyRe = /^\*/gu;
-    const m = multiplyRe.exec(str);
-
-    if (m) {
-      return gen({
-        type: 'multiply',
-      }, str.substr(multiplyRe.lastIndex))
-    }
-
-    return null
-  };
+  const add = simpleToken('add', /^\+/gu);
+  const multiply = simpleToken('multiply', /^\*/gu);
 
   const openParen = simpleToken('openParen', /^\(/gu);
   const closeParen = simpleToken('closeParen', /^\)/gu);
